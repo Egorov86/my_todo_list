@@ -25,3 +25,4 @@ class ToDoItem implements ToDoItemProps {
     return Object.assign(new ToDoItem(this.text), this, props);
   }
 }
+export default ToDoItemProps;

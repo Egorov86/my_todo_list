@@ -77,21 +77,30 @@ export function ToDoDelegation() {
   };
 
   const handleClick = (event: React.MouseEvent<HTMLElement>): void => {
-    const target = event.target as HTMLElement;
-    const closestActionEl = target.closest('[data-action]');
-    if (!closestActionEl) return;
+  const target = event.target as HTMLElement;
+  const closestActionEl = target.closest('[data-action]');
+  if (!closestActionEl) return;
 
-    const action = closestActionEl.dataset.action as ActionType;
-    let id: number | undefined;
+  // Получаем значение атрибута вручную
+  const rawActionAttr = closestActionEl.getAttribute('data-action');
+  const action = rawActionAttr && typeof rawActionAttr === 'string' ? rawActionAttr : undefined;
 
-    if (action === 'del' || action === 'toggle') {
-      const parentWithId = target.closest('[data-id]');
-      if (parentWithId) {
-        id = parseInt(parentWithId.dataset.id!, 10); // Типобезопасность
+  let id: number | undefined;
+
+  if (action === 'del' || action === 'toggle') {
+    const parentWithId = target.closest('[data-id]');
+    if (parentWithId) {
+      const rawIdAttr = parentWithId.getAttribute('data-id');
+      if (rawIdAttr && typeof rawIdAttr === 'string') {
+        id = parseInt(rawIdAttr, 10);
       }
     }
+  }
 
-    switch (action) {
+  if (action) {
+    const typedAction = action as ActionType;
+
+    switch (typedAction) {
       case 'add':
         if (ref.current && ref.current.value.trim()) {
           addItem(ref.current.value.trim());
@@ -109,7 +118,8 @@ export function ToDoDelegation() {
         }
         break;
     }
-  };
+  }
+};
 
   return (
     <fieldset onClick={handleClick}>
